@@ -1,0 +1,169 @@
+1. user can chat to another user
+2. user can create groups and join people
+3. user can add there dp
+4. user can voice call to user
+5. user can video call to user
+6. user can send video and photos to user
+7. user can send video and photos to the group
+8. user can delete the message or video or photo after sent
+9. end to end encryption messages
+10. user can login through name and email and password and dp (optional)
+11. user db: user profile (name and email and password), user messages to user, user photos and videos.
+
+routes
+auth routes
+// POST /auth/register - Register a new user
+// POST /auth/login - Login an existing user
+// POST /auth/logout - Logout user
+// GET /auth/refresh - Refresh JWT or access token
+
+user routes
+// GET /users/:id - Get user profile by ID
+// GET /users - Search users by name or status
+// PUT /users/:id - Update user profile
+
+chat routes
+// POST /chats - Create a new chat (e.g., 1-1 or group)
+// GET /chats/:id - Get chat details (messages, participants, etc.)
+// POST /chats/:id/messages - Send a message in a chat
+// GET /chats/:id/messages - Get messages in a chat
+// POST /chats/:id/mark-read - Mark messages as read
+// DELETE /chats/:id/messages/:messageId - Delete a message (optional)
+
+video call routes
+// POST /calls - Initiate a video call request
+// GET /calls/:id - Get call details (status, participants, etc.)
+// POST /calls/:id/accept - Accept a video call request
+// POST /calls/:id/reject - Reject a video call request
+// POST /calls/:id/end - End an ongoing call
+
+notification routes
+// GET /notifications - Get all notifications for the user
+// POST /notifications/mark-read - Mark notifications as read
+// DELETE /notifications/:id - Delete a specific notification
+
+
+whatsapp-clone/
+├── src/
+│   ├── config/           # Configurations (e.g., environment variables, database config)
+│   ├── controllers/      # Route controllers for each feature (e.g., Auth, Chat, Call)
+│   ├── middleware/       # Middleware (auth, rate limiter, error handler)
+│   ├── models/           # Database models/schemas
+│   ├── routes/           # API routes
+│   ├── services/         # Business logic (e.g., ChatService, CallService)
+│   ├── utils/            # Utility functions
+│   └── index.js          # Server entry point
+├── prisma/               # Prisma schema and migrations (if using Prisma)
+├── .env                  # Environment variables
+├── package.json
+└── README.md
+
+
+// prisma/schema.prisma
+
+model User {
+  id          String   @id @default(uuid())
+  username    String   @unique
+  password    String
+  email       String   @unique
+  createdAt   DateTime @default(now())
+  chats       Chat[]   @relation("UserChats")
+  messages    Message[]
+}
+
+model Chat {
+  id          String   @id @default(uuid())
+  type        ChatType
+  participants User[]   @relation("UserChats")
+  messages    Message[]
+  createdAt   DateTime  @default(now())
+}
+
+model Message {
+  id          String   @id @default(uuid())
+  chatId      String
+  chat        Chat      @relation(fields: [chatId], references: [id])
+  senderId    String
+  sender      User      @relation(fields: [senderId], references: [id])
+  content     String
+  createdAt   DateTime  @default(now())
+}
+
+model Call {
+  id          String   @id @default(uuid())
+  initiatorId String
+  initiator   User      @relation("Initiator")
+  receiverId  String
+  receiver    User      @relation("Receiver")
+  status      CallStatus
+  createdAt   DateTime  @default(now())
+}
+
+enum ChatType {
+  INDIVIDUAL
+  GROUP
+}
+
+enum CallStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  ENDED
+}
+
+
+Tech Stack----
+
+Turbo Repo
+Next js Frontend
+
+Backend--
+Express Backend
+JWT auth or nextauth with Oauth
+Postgres with Prisma (indexing and sharding)
+websocket
+webrtc
+
+features--
+rate limiting
+captchas with cloudflare
+ddos protection with cloudflare
+
+services--
+message queues(Redis or Kafka)
+
+Devops--
+Prometheus and grafana
+loki and kiali
+github actions and argocd
+Terraform
+Docker
+Kubernetes
+Helm and istio
+devsecops
+
+Testing--
+vitest and supertest and vitest-mock-extended
+
+Extra--
+prettier 
+eslint
+husky
+
+For Mobile--
+React Native
+
+
+steps--
+1. UI
+2. Authentication
+3. Logic for Websocket
+4. Backend API
+5. WEBRTC
+6. grafana and prometheus
+7. github actions / gitargo
+8. dockerize
+9. Terraform
+10. kubernetes
+11. testing
+12. real deployment with custom domain 

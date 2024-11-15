@@ -1,39 +1,33 @@
-import express, { Express } from "express";
-import cors from "cors";
-import cookieParser from "cookie-parser";
+import express, { Express } from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import { CORS_ORIGIN } from './config/env';
+import apiRouter from './routes/index';
+import { log } from './utils/logger';
 
 const app: Express = express();
 
-app.use(cors({
-    origin: process.env.CORS_ORIGIN,
-    credentials: true
-}));
-
-app.use(express.json({ limit: "16kb" }));
-app.use(express.urlencoded({ extended: true, limit: "16kb" }));
-app.use(express.static("public"));
+// Middleware setup
+app.use(cors({ origin: CORS_ORIGIN, credentials: true }));
+app.use(express.json({ limit: '16kb' }));
+app.use(express.urlencoded({ extended: true, limit: '16kb' }));
 app.use(cookieParser());
+app.use(express.static('public'));
 
-// // Routes import
-// import userRouter from './routes/user.routes';
-// import healthcheckRouter from "./routes/healthcheck.routes";
-// import tweetRouter from "./routes/tweet.routes";
-// import subscriptionRouter from "./routes/subscription.routes";
-// import videoRouter from "./routes/video.routes";
-// import commentRouter from "./routes/comment.routes";
-// import likeRouter from "./routes/like.routes";
-// import playlistRouter from "./routes/playlist.routes";
-// import dashboardRouter from "./routes/dashboard.routes";
+// API routes
+app.use('/api/v1', apiRouter);
 
-// // Routes declaration
-// app.use("/api/v1/healthcheck", healthcheckRouter);
-// app.use("/api/v1/users", userRouter);
-// app.use("/api/v1/tweets", tweetRouter);
-// app.use("/api/v1/subscriptions", subscriptionRouter);
-// app.use("/api/v1/videos", videoRouter);
-// app.use("/api/v1/comments", commentRouter);
-// app.use("/api/v1/likes", likeRouter);
-// app.use("/api/v1/playlist", playlistRouter);
-// app.use("/api/v1/dashboard", dashboardRouter);
+// Global error handler
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    log.error(`Error: ${err.message}`);
+    res.status(err.statusCode || 500).json({
+        success: false,
+        message: err.message || "Internal Server Error",
+        data: null,
+        errors: err.errors || [],
+    });
+});
 
-export { app };
+export default app;
+
+
