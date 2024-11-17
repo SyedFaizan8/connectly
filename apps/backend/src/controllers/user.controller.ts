@@ -5,7 +5,6 @@ import { User, IUser } from "../models/user.model";
 import { uploadOnCloudinary } from "../utils/cloudinary";
 import { ApiResponse } from "../utils/ApiResponse";
 import jwt from "jsonwebtoken";
-import mongoose, { Types } from "mongoose";
 
 // Generate access and refresh tokens
 const generateAccessAndRefereshTokens = async (userId: string) => {

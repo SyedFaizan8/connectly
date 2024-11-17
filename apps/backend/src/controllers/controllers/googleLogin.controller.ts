@@ -1,9 +1,9 @@
 import { mongoDB } from "../database/mongoInstance";
-import { accessTokenExp, refreshTokenExp } from "../constants/token.constants";
+import { accessTokenExp, refreshTokenExp } from "../utils/token.constants";
 import { OAuth2Client } from "google-auth-library";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
-import { createAccessToken, createRefreshToken } from "../utils/handleTokens";
+import { createAccessToken, createRefreshToken } from "../../utils/handleTokens";
 
 const client = new OAuth2Client(process.env.GAUTH_CLIENT_ID);
 
